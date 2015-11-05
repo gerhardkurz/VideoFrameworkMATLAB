@@ -17,12 +17,14 @@ classdef VideoFramework < handle
     
     methods
         function preview(this)
+            % Runs the video, but does not save anything
             this.projectName = class(this);
             this.init();
             this.runVideo(false);
         end
         
         function createVideo(this)
+            % Runs the video, saves frames as PNG, and encodes them as video files
             this.projectName = class(this);
             this.init();
             [~,~,~] = mkdir(this.projectName);
@@ -31,13 +33,43 @@ classdef VideoFramework < handle
         end
         
         function encode(this)
+            % Encodes the PNG frames as a video.
             this.projectName = class(this);
             cd(this.projectName)
-            this.encodeMatlab();
-            system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vcodec libx264 -vf crop=in_w-1:in_h output.mp4', this.framerate));
-            system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop=in_w-1:in_h -b 3000k -qscale 1 output.wmv', this.framerate));
-            system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop="in_w-1:in_h, scale=-1:720" -b 2000k -qscale 1 output-720p.wmv', this.framerate));
-            system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop="in_w-1:in_h, scale=-1:480" -b 1500k -qscale 1 output-480p.wmv', this.framerate));
+            try
+                % MATLAB encoder
+                this.encodeMatlab();
+                
+                % ffmpeg
+                % -y 
+                %   Overwrite output files without asking. 
+                % -f image2 -framerate %i -i %%06d.png 
+                %   read consecutively numbered images with 6 digits, use
+                %   user-defined framerate
+                % -vf crop=in_w-1:in_h
+                %   crop 1 pixel because PNGs have odd number of pixels
+                % -b 2000k
+                %   bitrate (2000k = 2MBit/s)
+                % -qscale 1
+                %   highest quality
+                
+                % best version (h264)
+                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vcodec libx264 -vf crop=in_w-1:in_h output.mp4', this.framerate));
+                
+                % h264 for Powerpoint
+                % https://msdn.microsoft.com/de-de/library/windows/desktop/dd797815%28v=vs.85%29.aspx
+                % maximum resolution is 1920 × 1088 pixels, thus we use 720p
+                % only supports yuv420p pixel format
+                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vcodec libx264 -pix_fmt yuv420p -vf crop="in_w-1:in_h-1, scale=-1:720" output-ppt.mp4', this.framerate));
+                
+                % wmv for Powerpoint, different resolutions, needs higher
+                % bitrate than h264
+                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop=in_w-1:in_h -b 3000k -qscale 1 output.wmv', this.framerate));
+                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop="in_w-1:in_h, scale=-1:720" -b 2000k -qscale 1 output-720p.wmv', this.framerate));
+                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop="in_w-1:in_h, scale=-1:480" -b 1500k -qscale 1 output-480p.wmv', this.framerate));
+            catch ex
+                ex
+            end
             cd('..')
         end
         
