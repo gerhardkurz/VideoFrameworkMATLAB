@@ -21,17 +21,17 @@ Features
 
 Example usage
 -------------
-Preview example video and create video files:
+To preview the example video and create the video files, type the following
 
-	e = ExampleVideo
-	e.preview
-	e.createVideo
+	>> e = ExampleVideo
+	>> e.preview
+	>> e.createVideo
 
-To encode the video without recreating the frames, use 
+To encode the video without recreating the PNG files, use the command
 
-	e.encode
+	>> e.encode
 
-To make your own video, copy the ExampleVideo class and rename it. Implement general settings and precalculations in init() and the code to draw the n-th frame in drawFrame(). 
+To make your own video, copy the ExampleVideo class and rename it. Implement general settings and precalculations in init() and the code to draw the n-th frame in drawFrame(). The other functions are inherited from the VideoFramework class.
 
 License
 -------
