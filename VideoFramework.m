@@ -46,7 +46,7 @@ classdef VideoFramework < handle
                 % -f image2 -framerate %i -i %%06d.png 
                 %   read consecutively numbered images with 6 digits, use
                 %   user-defined framerate
-                % -vf crop=in_w-1:in_h
+                % -vf crop=in_w-1:in_h-1
                 %   crop 1 pixel because PNGs have odd number of pixels
                 % -b 2000k
                 %   bitrate (2000k = 2MBit/s)
@@ -54,19 +54,19 @@ classdef VideoFramework < handle
                 %   highest quality
                 
                 % best version (h264)
-                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vcodec libx264 -vf crop=in_w-1:in_h output.mp4', this.framerate));
+                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vcodec libx264 -vf crop=in_w-1:in_h-1 output.mp4', this.framerate));
                 
                 % h264 for Powerpoint
                 % https://msdn.microsoft.com/de-de/library/windows/desktop/dd797815%28v=vs.85%29.aspx
-                % maximum resolution is 1920 × 1088 pixels, thus we use 720p
+                % maximum resolution is 1920 x 1088 pixels, thus we use 720p
                 % only supports yuv420p pixel format
                 system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vcodec libx264 -pix_fmt yuv420p -vf crop="in_w-1:in_h-1, scale=-1:720" output-ppt.mp4', this.framerate));
                 
                 % wmv for Powerpoint, different resolutions, needs higher
                 % bitrate than h264
-                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop=in_w-1:in_h -b 3000k -qscale 1 output.wmv', this.framerate));
-                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop="in_w-1:in_h, scale=-1:720" -b 2000k -qscale 1 output-720p.wmv', this.framerate));
-                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop="in_w-1:in_h, scale=-1:480" -b 1500k -qscale 1 output-480p.wmv', this.framerate));
+                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop=in_w-1:in_h-1 -b 3000k -qscale 1 output.wmv', this.framerate));
+                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop="in_w-1:in_h-1, scale=-1:720" -b 2000k -qscale 1 output-720p.wmv', this.framerate));
+                system(sprintf('ffmpeg -y -f image2 -framerate %i -i %%06d.png -vf crop="in_w-1:in_h-1, scale=-1:480" -b 1500k -qscale 1 output-480p.wmv', this.framerate));
             catch ex
                 ex
             end
@@ -77,7 +77,12 @@ classdef VideoFramework < handle
     
 	methods (Access = private)
         function encodeMatlab(this)
-            vw = VideoWriter('output-matlab','MPEG-4');
+            if ispc || ismac
+                vw = VideoWriter('output-matlab','MPEG-4');
+            else
+                % MATLAB on Linux does not support MPEG-4
+                vw = VideoWriter('output-matlab.avi');
+            end
             vw.Quality = 100;
             vw.FrameRate = this.framerate;
             vw.open()
