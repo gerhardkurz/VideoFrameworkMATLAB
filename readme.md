@@ -1,7 +1,7 @@
 Video Framework for Matlab
 ==========================
 
-This framwork provides the class "VideoFramework" to easily create videos using MATLAB.
+This framework provides the class "VideoFramework" to easily create videos using MATLAB.
 
 Requirements
 ------------
@@ -13,9 +13,9 @@ Features
 --------
 
   * create video with predefined number of frames
-  * choose framerate
+  * choose frame rate
   * fw/bw/fwbw (forward, backward, forward-backward) mode to create videos in reverse and videos that loop
-  * encode using ffmpeg or MATLAB builtin encoder
+  * encode using ffmpeg or MATLAB built-in encoder
   * saves individual frames as PNG
   * supports high resolutions
 
