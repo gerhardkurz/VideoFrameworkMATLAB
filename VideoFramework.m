@@ -16,6 +16,10 @@ classdef VideoFramework < handle
     end
     
     methods
+        function this = VideoFramework()
+            addpath(pwd);
+        end
+        
         function preview(this)
             % Runs the video, but does not save anything
             this.projectName = class(this);
