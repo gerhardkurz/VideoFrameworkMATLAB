@@ -38,7 +38,10 @@ classdef VideoFramework < handle
         
         function encode(this)
             % Encodes the PNG frames as a video.
-            this.projectName = class(this);
+            if isempty(this.projectName)
+                this.projectName = class(this);
+            end
+            this.init();
             cd(this.projectName)
             try
                 % MATLAB encoder
