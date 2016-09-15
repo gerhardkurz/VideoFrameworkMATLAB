@@ -3,7 +3,7 @@ classdef VideoFramework < handle
     %
     % Gerhard Kurz, GPLv3
     %
-    % Example usage: 
+    % Example usage:
     %   e = ExampleVideo
     %   e.preview
     %   e.createVideo
@@ -48,9 +48,9 @@ classdef VideoFramework < handle
                 this.encodeMatlab();
                 
                 % ffmpeg
-                % -y 
-                %   Overwrite output files without asking. 
-                % -f image2 -framerate %i -i %%06d.png 
+                % -y
+                %   Overwrite output files without asking.
+                % -f image2 -framerate %i -i %%06d.png
                 %   read consecutively numbered images with 6 digits, use
                 %   user-defined framerate
                 % -vf crop=in_w-1:in_h-1
@@ -82,7 +82,7 @@ classdef VideoFramework < handle
         
     end
     
-	methods (Access = private)
+    methods (Access = private)
         function encodeMatlab(this)
             if ispc || ismac
                 vw = VideoWriter('output-matlab','MPEG-4');
@@ -119,7 +119,7 @@ classdef VideoFramework < handle
                         n=n+1;
                         VideoFramework.saveFigure(f1, [this.projectName sprintf('/%06d', n)]);
                     end
-                end            
+                end
             end
             if strcmp(this.mode,'bw') || strcmp(this.mode,'fwbw')
                 for i=this.totalFrames:-1:1
@@ -130,11 +130,11 @@ classdef VideoFramework < handle
                         n=n+1;
                         VideoFramework.saveFigure(f1, [this.projectName sprintf('/%06d', n)]);
                     end
-                end            
+                end
             end
         end
     end
-        
+    
     methods (Abstract)
         init(this)
         drawFrame(this, nr)
@@ -147,22 +147,22 @@ classdef VideoFramework < handle
             oldscreenunits = get(fig,'Units');
             oldpaperunits = get(fig,'PaperUnits');
             oldpaperpos = get(fig,'PaperPosition');
-
+            
             %change settings before saving
             set(fig,'Units','pixels');
             scrpos = get(fig,'Position');
             newpos = scrpos/110;
             set(fig,'PaperUnits','inches',...
-            'PaperPosition',newpos)
-
+                'PaperPosition',newpos)
+            
             %save file
             %print(fig,'-dpng', [filename '.png'], '-r300', '-painters');
             print(fig,'-dpng', [filename '.png'], '-r300');
-
+            
             %restore old settings
             set(fig,'Units',oldscreenunits,...
-            'PaperUnits',oldpaperunits,...
-            'PaperPosition',oldpaperpos)
+                'PaperUnits',oldpaperunits,...
+                'PaperPosition',oldpaperpos)
         end
         
     end
