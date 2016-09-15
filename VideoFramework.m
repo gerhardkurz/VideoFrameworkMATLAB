@@ -10,7 +10,7 @@ classdef VideoFramework < handle
     
     properties
         totalFrames = 100;
-        framerate = 30;
+        framerate = 30; %number of frames per second
         projectName = '';
         mode = 'fw' %supported modes are fw, bw and fwbw
     end
@@ -84,28 +84,35 @@ classdef VideoFramework < handle
     
     methods (Access = private)
         function encodeMatlab(this)
-            if ispc || ismac
-                vw = VideoWriter('output-matlab','MPEG-4');
-            else
-                % MATLAB on Linux does not support MPEG-4
-                vw = VideoWriter('output-matlab.avi');
-            end
-            vw.Quality = 100;
-            vw.FrameRate = this.framerate;
-            vw.open()
-            n = 1;
-            while true
-                filename = sprintf('%06d.png', n);
-                if ~exist(filename,'file')
-                    break
+            try
+                if ispc || ismac
+                    vw = VideoWriter('output-matlab','MPEG-4');
+                else
+                    % MATLAB on Linux does not support MPEG-4
+                    vw = VideoWriter('output-matlab.avi');
                 end
-                img1 = imread(filename);
-                img2 = imresize(img1, min(1088/size(img1,1),1920/size(img1,2)) ); %resize image to be no larger than 1088 x 1920
-                img3 = padarray(img2, mod([size(img2,1), size(img2,2)] ,4), 'replicate', 'post'); % pad to make size divisble by four
-                vw.writeVideo(img3);
-                n = n+1;
+                vw.Quality = 100;
+                vw.FrameRate = this.framerate;
+                vw.open()
+                n = 1;
+                fprintf('encoding with MATLAB Videowriter\n');
+                while true
+                    filename = sprintf('%06d.png', n);
+                    if ~exist(filename,'file')
+                        break
+                    end
+                    nBytes = fprintf('frame %i', n); %display progress
+                    img1 = imread(filename);
+                    img2 = imresize(img1, min(1088/size(img1,1),1920/size(img1,2)) ); %resize image to be no larger than 1088 x 1920
+                    img3 = padarray(img2, mod([size(img2,1), size(img2,2)] ,4), 'replicate', 'post'); % pad to make size divisble by four
+                    vw.writeVideo(img3);
+                    fprintf(repmat('\b',1,nBytes))
+                    n = n + 1;
+                end
+                vw.close()
+            catch ex
+                ex
             end
-            vw.close()
         end
         
         function runVideo(this, saveImages)
@@ -141,7 +148,7 @@ classdef VideoFramework < handle
     end
     
     methods (Static)
-        %saves the given figure as a PNG/EPS files
+        %saves the given figure as a PNG file
         function saveFigure(fig, filename)
             %preserve old settings
             oldscreenunits = get(fig,'Units');
