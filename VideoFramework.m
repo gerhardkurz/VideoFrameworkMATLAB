@@ -29,8 +29,7 @@ classdef VideoFramework < handle
         
         function createVideo(this)
             % Runs the video, saves frames as PNG, and encodes them as video files
-            this.projectName = class(this);
-            this.init();
+            this.clean();
             [~,~,~] = mkdir(this.projectName);
             this.runVideo(true);
             this.encode();
@@ -78,6 +77,19 @@ classdef VideoFramework < handle
                 ex
             end
             cd('..')
+        end
+        
+        function clean(this)
+            % Deletes all created pngs
+            if isempty(this.projectName)
+                this.projectName = class(this);
+            end
+            this.init();
+            if exist(this.projectName, 'dir');
+                cd(this.projectName)
+                delete('./*.png')
+                cd('..')
+            end
         end
         
     end
