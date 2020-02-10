@@ -36,14 +36,15 @@ To make your own video, copy the ExampleVideo class and rename it. Implement gen
 License
 -------
 
-VideoFrameworkMATLAB is licensed under the GPLv3 license.
+VideoFrameworkMATLAB is licensed under the MIT license.
 
 Contact
 -------
 
 Author: Gerhard Kurz
 
-Mail: gerhard.kurz (at) kit (dot) edu
+Mail: kurz.gerhard (at) gmail (dot) com
 
-Web: [http://isas.uka.de/User:Kurz](http://isas.uka.de/User:Kurz)
+Web: [http://www.gerhardkurz.de](http://www.gerhardkurz.de)
+
 
