@@ -1,7 +1,7 @@
 classdef VideoFramework < handle
     % Framework for creating videos.
     %
-    % Gerhard Kurz, GPLv3
+    % Gerhard Kurz
     %
     % Example usage:
     %   e = ExampleVideo
